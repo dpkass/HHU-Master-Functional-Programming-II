@@ -1,0 +1,24 @@
+
+
+# Default, copied from https://github.com/gfredericks/lein-lein/blob/master/.gitignore
+/target
+/classes
+/checkouts
+pom.xml
+pom.xml.asc
+*.jar
+*.class
+/.lein-*
+/.nrepl-port
+
+
+# IntelliJ
+.idea
+*.iml
+
+clj-kondo
+**/.clj-kondo/.cache
+
+.DS_Store
+.lsp
+clj-kondo.build_artifacts.txt
