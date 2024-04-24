@@ -41,3 +41,26 @@ Encoded: [1 1 7 3 1 7]")                                    ; should actually be
 (assert (= (compress [1 3 3 3 3 3 3 3 7])
            [1 1 7 3 1 7]))
 
+
+
+(comment "Schreiben Sie ein oszillierendes iterate: Die Funktion nimmt einen Startwert und
+beliebig viele Funktionen. Es soll eine (lazy) Sequenz von Funktionswerten in der Reihenfolge der
+Funktionen zurückgegeben werden, beginnend mit dem Startwert. Ist die Funktionssequenz
+abgearbeitet, beginnt diese erneut.")
+
+(comment "Implement an oscillating iterate function, that takes an initial value and an arbitrary
+number of functions, and returns a (lazy) seq of values applying the provided functions
+sequentially. If all functions were used, start over.")
+
+(comment
+ "user=> (take 5 (oscil 3 #(- % 3) #(+ 5 %)))
+ [3 0 5 2 7]")
+
+(defn oscil [x & fs]
+  (letfn [(step [x [f & fs]]
+            (lazy-seq
+             (cons x (step (f x) fs))))]
+    (step x (cycle fs))))
+
+(assert (= (take 5 (oscil 3 #(- % 3) #(+ 5 %)))
+           [3 0 5 2 7]))
