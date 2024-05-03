@@ -47,7 +47,6 @@
 
 ;; Let's use the opportunity for tests!
 
-(comment 
 
 ;; usually, this is defined in a file in the test/ folder rather than src/
 ;; 'deftest' defines a test, 'is' is an assertion in the test
@@ -78,8 +77,3 @@
 ;; Of the entire input space of the function, we covered almost nothing...
 
 ;; We will come back to this in the exercises!
-
-)
-
-
-
