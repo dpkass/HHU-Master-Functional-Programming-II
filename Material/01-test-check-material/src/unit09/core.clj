@@ -1,6 +1,7 @@
-(comment "Task 1: In the files for the exercise you will find the namespace unit09.edit-distance.
-Have a
-look at the functions levenshtein and levenschtein.")
+(comment "Task 1: (test.check)
+
+In the files for the exercise you will find the namespace unit09.edit-distance. Have a look at
+the functions levenshtein and levenschtein.")
 
 (comment "a)  Create a namespace in the test directory, that can access both functions.")
 
@@ -67,7 +68,9 @@ purpose, you can use the name lists from https://github.com/dominictarr/random-n
 
 
 
-(comment "Task 2: Given a triangle in the form of a vector of vectors we want to find the shortest
+(comment "Task 2: (Shortest path problem)
+
+Given a triangle in the form of a vector of vectors we want to find the shortest
 possible path from the top of the triangle to the bottom, such that the sum of the weights is
 minimized. In each step, only one adjacent field in the next lower row may be selected.")
 
@@ -85,3 +88,46 @@ minimized. In each step, only one adjacent field in the next lower row may be se
 
 (defn my-trampoline [a b] true)
 
+
+
+
+(comment "Task 3: (Trampoline (4clojure No. 78) and recursion)
+
+We have already seen that self-recursion in tail position using recur ensures that no
+additional stack frames are used per recursion step. This approach does not work if two (or more)
+functions call each other.
+The higher-order function trampoline receives a function and an arbitrary amount of values. The
+function is then called with the given values as parameters. If the return value itself is a
+function again, it is called without parameters. As long as the resulting return values are
+functions, they will continue to be called, otherwise the value is returned by trampoline.")
+
+(comment "a) Implement a function that behaves like trampoline. In particular, the recursion
+should not use any more stack frames.
+
+(letfn [(triple [x] (fn [] (sub-two (* 3 x))))
+    (sub-two [x] (fn [] (stop? (- x 2))))
+    (stop? [x] (if (> x 50) x (fn [] (triple x))))]
+  (my-trampoline triple 2))
+=> 82
+
+(letfn [(my-even? [x] (if (zero? x) true (fn [] (my-odd? (dec x)))))
+    (my-odd? [x] (if (zero? x) false (fn [] (my-even? (dec x)))))]
+  (map (partial my-trampoline my-even?) (range 6)))
+=> [true false true false true false]
+
+
+Note: You can use fn? to check if a value is a function or not.
+
+Additonal note: partial is a higher order function, which receives a function f and a part of
+its arguments a1, . . . , ai and returns a function which accepts further parameters ai+1, . . .
+, an (i ≤ n) and then calls f with parameters a1 to an. letfn is a special let for functions.")
+
+(defn my-trampoline
+  ([f & args] (my-trampoline (apply f args)))
+  ([f] (if-not (fn? f) f (recur (f)))))
+
+
+(comment "b) What do you have to do if the result of the entire calculation happens to be a
+function itself?")
+
+; wrap it
