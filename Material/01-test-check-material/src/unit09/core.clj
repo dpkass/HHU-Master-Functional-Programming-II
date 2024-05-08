@@ -1,3 +1,7 @@
+(comment "Task 1: In the files for the exercise you will find the namespace unit09.edit-distance.
+Have a
+look at the functions levenshtein and levenschtein.")
+
 (comment "a)  Create a namespace in the test directory, that can access both functions.")
 
 (ns unit09.core
@@ -59,3 +63,25 @@ purpose, you can use the name lists from https://github.com/dominictarr/random-n
   (gen/fmap to-user-map first-lastname-number-generator))
 
 (gen/sample user-generator)
+
+
+
+
+(comment "Task 2: Given a triangle in the form of a vector of vectors we want to find the shortest
+possible path from the top of the triangle to the bottom, such that the sum of the weights is
+minimized. In each step, only one adjacent field in the next lower row may be selected.")
+
+(defn path
+  ([pyramid] (first (path pyramid 0 0)))
+  ([pyramid x y]
+   (if (>= x (count pyramid))
+     [0 '()]
+     (let [val (get-in pyramid [x y])
+           [l-val l-acc] (path pyramid (inc x) y)
+           [r-val r-acc] (path pyramid (inc x) (inc y))]
+       (if (< l-val r-val)
+         [(+ l-val val) (conj l-acc val)]
+         [(+ r-val val) (conj r-acc val)])))))
+
+(defn my-trampoline [a b] true)
+
