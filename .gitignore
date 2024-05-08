@@ -1,4 +1,4 @@
-
+.cpcache
 
 # Default, copied from https://github.com/gfredericks/lein-lein/blob/master/.gitignore
 /target
