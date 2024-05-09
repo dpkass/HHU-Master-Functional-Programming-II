@@ -1,5 +1,6 @@
 (ns spec.core
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s])
+  (:require [clojure.spec.test.alpha :as stest]))
 
 (comment "Task 1: (Specs)")
 
@@ -46,3 +47,28 @@ playing card. If this playing card is currently in the hand of the named player,
            :cards/hand [[:queen :diamond] [:king :diamond] [:ace :hearts]]}]
          "Philipp"
          [3 :clubs])
+
+
+(comment "c) Annotate discard with specs, which ensure that if called correctly, a set of players
+is returned by the function.")
+
+(s/def ::players (s/coll-of ::player))
+(s/fdef discard
+        :args (s/cat
+               :players ::players
+               :name :cards/name
+               :card ::card)
+        :ret ::players)
+
+(s/exercise-fn `discard)
+
+
+(comment "d) Is it possible to detect a problem with generated tests?
+
+Note: you can limit the size of the generated values with
+(stest/check ‘discard {:clojure.spec.test.check/opts {:max-elements 4 :max-size 3}})
+Otherwise, testing can take a very long time..")
+
+(stest/check `discard {:clojure.spec.test.check/opts {:max-elements 4 :max-size 3}})
+
+; no errors
