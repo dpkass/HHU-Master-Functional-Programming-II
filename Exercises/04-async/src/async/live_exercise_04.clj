@@ -1,5 +1,5 @@
 (ns async.live-exercise-04
-  (:require [clojure.core.async :as async]))
+  (:use [clojure.core.async]))
 
 
 
@@ -7,22 +7,33 @@
  "Schreiben Sie eine Funktion (receive-n c n), die n Elemente von einem channel nimmt und diese als seq zurück gibt.
  Beispiel:"
 
- user=> (let [c (async/chan)]
+ user=> (let [c (chan)]
           (dotimes [i 10]
-            (async/thread
+            (thread
              (Thread/sleep 10)
-             (async/>!! c i)))
+             (>!! c i)))
           (receive-n c 10))
  (2 3 0 1 5 6 4 7 8 9))
 
 (defn receive-n [c n]
-  (repeatedly n #(async/<!! c)))
+  (repeatedly n #(<!! c)))
 
-(let [c (async/chan)]
+(let [c (chan)]
   (dotimes [i 10]
-    (async/thread
+    (thread
      (Thread/sleep 10)
-     (async/>!! c i)))
+     (>!! c i)))
   (receive-n c 10))
 
 
+
+(comment
+ "Koordinieren Sie die geteilte Ressource (stdout), indem Sie core.async Channel verwenden."
+
+ (do (future (dotimes [x 100] (println "(..." x "...)")))
+     (future (dotimes [x 100] (println "(..." x "...)")))))
+
+(let [c (chan)]
+  (go (while :true (println (<! c))))
+  (future (dotimes [x 100] (>!! c (str "(..." x "...)"))))
+  (future (dotimes [x 100] (>!! c (str "(..." x "...)")))))
