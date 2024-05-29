@@ -17,3 +17,23 @@
 
 (double-even-str (range 20))
 
+
+
+(comment
+ "Was tut der folgende, statebehaftete Transducer? Was ist ein möglicher Aufruf?"
+
+ (defn xyz []
+   (fn [xf]
+     (let [p (atom ::none)]
+       (fn
+         ([] (xf))
+         ([a] (xf a))
+         ([a e]
+          (let [pp @p]
+            (reset! p e)
+            (if (= pp e)
+              a
+              (xf a e)))))))))
+
+(comment "removes duplicates saved in p")
+
