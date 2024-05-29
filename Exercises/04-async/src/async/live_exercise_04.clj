@@ -37,3 +37,25 @@
   (go (while :true (println (<! c))))
   (future (dotimes [x 100] (>!! c (str "(..." x "...)"))))
   (future (dotimes [x 100] (>!! c (str "(..." x "...)")))))
+
+
+
+(comment
+ "Schreiben Sie ein Makro (wuäh!) (do-or-timeout n body), das versucht den body zu evaluieren.
+ Falls dies nach n Millisekunden noch nicht gelungen ist, soll :timeout zurückgegeben werden. Sie
+ können davon ausgehen, dass der body nicht nil zurück gibt."
+
+ user=> (do-or-timeout 1000 (do (Thread/sleep 100) (inc 1)))
+ 2
+
+ user=> (do-or-timeout 1000 (do (Thread/sleep 1001) (inc 1)))
+ :timeout)
+
+
+(defmacro do-or-timeout [n body]
+  `(let [c# (timeout ~n)]
+     (go (>! c# ~body))
+     (or (<!! c#) :timeout)))
+
+(do-or-timeout 1000 (do (Thread/sleep 100) (inc 1)))
+(do-or-timeout 1000 (do (Thread/sleep 1001) (inc 1)))
