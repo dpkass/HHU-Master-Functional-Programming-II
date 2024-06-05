@@ -59,3 +59,39 @@
 
 (do-or-timeout 1000 (do (Thread/sleep 100) (inc 1)))
 (do-or-timeout 1000 (do (Thread/sleep 1001) (inc 1)))
+
+
+
+(comment
+ "Implementieren Sie die Funktionen (mult c) und (tap a c). mult gibt ein Objekt zurück, dass als
+ erstes Argument in tap weitergereicht wird. Alle Elemente auf c sollen dann auf allen tappenden
+ Channels weitergereicht werden."
+
+ (def c (chan)) (def out1 (chan)) (def out2 (chan))
+
+ (def a (mult c))
+ (tap a out1) (tap a out2)
+
+ (go (>! c 42))
+ (<!! out1)
+ (<!! out2))
+
+(defn mult [c]
+  (let [outs (atom [])]
+    (go (while :true
+          (let [in (<! c)]
+            (doseq [out outs] (>! out in)))))))
+
+(defn tap [a c]
+  (swap! a conj c))
+
+
+(do
+  (def c (chan)) (def out1 (chan)) (def out2 (chan))
+
+  (def a (mult c))
+  (tap a out1) (tap a out2))
+
+(go (>! c 42))
+(<!! out1)
+(<!! out2)
