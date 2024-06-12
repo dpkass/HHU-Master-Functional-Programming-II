@@ -23,11 +23,10 @@
      (transduce
       (comp
        (filter (fn [row] (or (= "titleType" (nth row 1))
-                             (and (= "movie" (nth row 1))))))
-       (map #(select-indices % [0 2 5]))
-       (fn ([a] (do (println a) a)) ([a b] (do (println b) a))))
+                             (= "movie" (nth row 1)))))
+       (map #(select-indices % [0 2 5])))
       conj
-      (csv/read-csv reader :separator \tab :quote \|)))))
+      (csv/read-csv reader :separator \tab :quote 0)))))
 
 (take 10 titles)
 
@@ -43,8 +42,8 @@
 
 
 ;; use the filesystem as storage medium
-;(def cfg {:store {:backend :file :path "/tmp/example"}})
-(def cfg {:store {:backend :mem}})
+(def cfg {:store {:backend :file :path "/tmp/fp/datomic/db"}})
+;(def cfg {:store {:backend :mem}})
 
 ;; create a database at this place, per default configuration we enforce a strict
 ;; schema and keep all historical data
@@ -71,26 +70,42 @@
                    :db/valueType   :db.type/long
                    :db/cardinality :db.cardinality/one}])
 
+(defn null-check-parse [parse-fn val]
+  (if (= val "\\N") nil (parse-fn val)))
+(defn to-long [val] (null-check-parse #(Long/parseLong %) val))
+(defn to-float [val] (null-check-parse #(Float/parseFloat %) val))
 
 (defn to-txs [[_heads & titles] [_heads2 & scores]]
   ;; TODO:
-  ;; hints:
-  ;; - adding attribute may look like:
-  ;; (transact conn [[:db/add -1 :name "Ivan"]
-  ;;                 [:db/add -1 :likes "fries"]
-  ;;                 [:db/add -1 :likes "pizza"]
-  ;;                 [:db/add -1 :friend 296]])
-  ;; - strings and negative integers can be used as temporary IDs
-  ;; (in a single transaction, equal tempids will be replaced with the same unused yet entid)
-  ;; - reverse attribute name can be used if you want a created entity to become
-  ;; a value in another entity reference
-  ;; (transact conn [{:db/id  -1
-  ;;                  :name   "Oleg"
-  ;;                  :_friend 296}])
-  ;; equivalent to
-  ;; (transact conn [[:db/add  -1 :name   "Oleg"]
-  ;;                 {:db/add 296 :friend -1]])
-  )
+  ;;  hints:
+  ;;  - adding attribute may look like:
+  ;;  (transact conn [[:db/add -1 :name "Ivan"]
+  ;;                  [:db/add -1 :likes "fries"]
+  ;;                  [:db/add -1 :likes "pizza"]
+  ;;                  [:db/add -1 :friend 296]])
+  ;;  - strings and negative integers can be used as temporary IDs
+  ;;  (in a single transaction, equal tempids will be replaced with the same unused yet entid)
+  ;;  - reverse attribute name can be used if you want a created entity to become
+  ;;  a value in another entity reference
+  ;;  (transact conn [{:db/id  -1
+  ;;                   :name   "Oleg"
+  ;;                   :_friend 296}])
+  ;;  equivalent to
+  ;;  (transact conn [[:db/add  -1 :name   "Oleg"]
+  ;;                  [:db/add 296 :friend -1]])
+  (concat
+   (for [[id title year] titles]
+     (let [year-long (to-long year)]
+       (concat
+        [:db/add id :title title]
+        (when year-long
+          [:db/add id :year year-long]))))
+   (for [[id score votes] scores]
+     {:score     (to-float score)
+      :num-votes (to-long votes)
+      :_rating   id})))
+
+
 
 (def txs (to-txs titles score))
 
@@ -101,14 +116,19 @@
 (binding
  [taoensso.timbre/*config*
   (assoc taoensso.timbre/*config* :min-level :info)]
-  (do (d/transact conn txs) nil))
+  (d/transact conn txs)
+  nil)
 
 ;; search the data
 (d/q '[:find ?year
-       :where,,,
-       ]
+       :where [?e :year ?year]
+       [?e :rating ?r]
+       [?r :score 5.7]]
      @conn)
 
+(take 5 (d/q '[:find (pull ?r [*])
+               :where [?e :rating ?r]]
+             @conn))
 ;; you might need to release the connection for specific stores
 (d/release conn)
 
