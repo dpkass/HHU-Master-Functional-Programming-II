@@ -1,0 +1,122 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[ngerman]{babel}
+\usepackage[TS1,T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{theorem}
+\usepackage[scaled=0.9]{helvet}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{stmaryrd}
+\usepackage{pgf,tikz}
+\usepackage{relsize}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{algpseudocode,amsmath,xifthen}
+
+\newcounter{numb}
+\theoremstyle{break}
+\theorembodyfont{\upshape}
+    \newtheorem{aufgabe}{Aufgabe}[numb]
+\setcounter{numb}{1}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\textwidth}{16cm}
+\setlength{\textheight}{23cm}
+\setlength{\topmargin}{-2cm}
+
+\usetikzlibrary{shapes,arrows,automata,positioning,decorations.fractals}
+\renewcommand\familydefault{\sfdefault}
+
+\begin{document}
+
+\begin{minipage}[b]{\textwidth}
+\parbox[t]{5cm}{%
+\includegraphics[width=4cm]{unilogo}
+\hfill
+}
+\parbox[b]{11cm}{%
+%\scshape%
+Heinrich-Heine-Universit\"at D\"usseldorf\\
+Institut f\"ur Informatik\\
+Lehrstuhl Softwaretechnik und Programmiersprachen\\
+%Professor Dr.\ M.\ Leuschel
+Philipp K\"orner
+}
+
+%%date
+%\hfill 1.\@ August 2017\rule{0mm}{6mm}\quad\ %% <--
+\end{minipage}
+\begin{center}
+\bf
+Vertiefung Funktionale Programmierung -- SS 2021\\
+Reading Guide: re-frame
+\end{center}
+
+\pagestyle{empty}
+
+%\paragraph{Zeitliche Orientierung:} Diese Lerneinheit sollte bis zum 11.02.2021 abgeschlossen werden.
+%\paragraph{Abgabe des Lerntagebuchs} \"uber das ILIAS bis zum 16.5.2020 mit unbegrenzt Material, Nachfrist bis zum 23.5.2020 mit zwei Seiten A4.
+
+\section{Material}
+
+\begin{itemize}
+    \item Repl (Ordner example)
+    \item Reagent Live Demo \url{https://reagent-project.github.io/}
+    \item re-frame Dokumentation (Mindestens THE BASICS und MENTAL MODEL OMNIBUS aber der Rest lohnt sich auch) \url{https://day8.github.io/re-frame/re-frame/}
+    \item Shaun Mahood: re-frame your ClojureScript applications \url{https://www.youtube.com/watch?v=cDzjlx6otCU}
+\end{itemize}
+
+\section{Lernziele}
+
+Nach dem Bearbeiten dieser Lerneinheit sollten Sie in der Lage sein
+
+\begin{itemize}
+    \item die Begriffe React, Reagent und Re-frame gegenüber zu stellen.
+    \item den Dataloop in re-frame zu skizzieren.
+    \item zu dem Statement 're-frame has a simple dynamic process' Stellung zu nehmen.
+    \item einfache Single Page Applications mithilfe von reagent/re-frame zu schreiben.
+\end{itemize}
+
+\section{Highlights}
+
+\begin{itemize}
+    \item repl getriebene Entwicklung im Browser
+    \item Atome als global state database
+    \item Data oriented Design
+    \item Dataloop als Finite State Machine (Deterministischer Automat)
+    \item v = f(s)
+    \item Signal Graph
+    \item Interceptors
+\end{itemize}
+
+\section{Aufgaben}
+
+\begin{aufgabe}[Tic Tac Toe]
+
+In dieser Aufgabe sollen Sie einen ClojureScript Klon des Tic Tac Toe Spiels aus dem React Tutorial \url{https://reactjs.org/tutorial/tutorial.html} schreiben.
+Im Ordner aufgaben finden Sie ein Basisprojekt, ähnlich zum Startercode im Tutorial.
+
+\begin{enumerate}[label=\alph*)]
+  \item Folgen Sie dem React Guide Schritt für Schritt und implementieren Sie die jeweiligen Funktionalitäten mit Hilfe von Reagent.
+        Der Code muss hier nicht 1:1 übersetzt werden. Gleiche Funktionalität ist ausreichend.
+  \item Schreiben Sie nun ihre funktionierende reagent App so um, dass re-frame verwendet wird.
+        Nehmen Sie sich etwas Zeit zum planen und beachten Sie die Debugging Hinweise am Ende der REPL.
+\end{enumerate}
+
+\end{aufgabe}
+
+\section{Weiterführendes Material}
+
+\begin{enumerate}
+ \item Der Rest der Re-frame Dokumentation!
+ \item Figwheel Template \url{https://github.com/bhauman/lein-figwheel}
+ \item re-frame Talk \url{https://www.youtube.com/watch?v=JCY_cHzklRs}
+ \item Reitit/Ring für Routing \url{https://github.com/metosin/reitit}
+ \item Re-frisk für Debugging \url{https://github.com/flexsurfer/re-frisk}
+ \item Luminus für ein ausgereiftes modulares Full Stack Template \url{https://luminusweb.com/}
+\end{enumerate}
+
+\end{document}
