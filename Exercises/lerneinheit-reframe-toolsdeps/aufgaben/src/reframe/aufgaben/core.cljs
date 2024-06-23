@@ -1,14 +1,14 @@
 (ns reframe.aufgaben.core
   (:require
-   [re-frame.core :refer [dispatch dispatch-sync subscribe]]
+   [re-frame.core :refer [dispatch dispatch-sync]]
    [reagent.dom :as rdom]
    [reframe.aufgaben.events :as events]
    [reframe.aufgaben.subs :as subs :refer [sub]]))
 
-(defn Square [num]
-  (let [value (sub [::subs/square num])]
+(defn Square [sq]
+  (let [value (sub [::subs/square sq])]
     [:button.square
-     (when (not value) {:on-click #(dispatch [::events/click-square num])})
+     (when (not value) {:on-click #(dispatch [::events/click-square sq])})
      value]))
 
 (defn Status []
@@ -23,13 +23,20 @@
    [:div.board-row [Square 6] [Square 7] [Square 8]]])
 
 (defn Game []
-  [:div {:className "game"}
-   [:div {:className "game-board"}
-    [Board]]
-   [:div {:className "game-info"}
-    [:div ;; Status
-     [:ol ;; TODO Zeitreise
-      ]]]])
+  (let [history (sub [::subs/history])]
+    [:div {:className "game"}
+     [:div {:className "game-board"}
+      [Board]]
+     [:div {:className "game-info"}
+      [:div
+       [:ol
+        (map-indexed
+         (fn [i h]
+           [:li {:key i}
+            [:button
+             {:on-click #(dispatch [::events/return h i])}
+             (str "Go to move # " i)]])
+         history)]]]]))
 
 (dispatch-sync [::events/initialize-db])
 (rdom/render [Game]

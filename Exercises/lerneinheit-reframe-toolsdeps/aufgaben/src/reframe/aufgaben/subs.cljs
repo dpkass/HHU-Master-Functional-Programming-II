@@ -5,6 +5,7 @@
 
 (reg-sub
  ::square
- (fn [db [_ num]] (get-in db [:squares num])))
+ (fn [db [_ sq]] (get-in db [:squares sq])))
 
 (reg-sub ::current-player #(:current-player %))
+(reg-sub ::history #(:history %))

@@ -3,16 +3,24 @@
 
 (reg-event-db
  ::initialize-db
- (fn [_ _] {:squares (vec (repeat 9 nil))
-            :current-player "X"}))
-
+ (fn [_ _] {:squares        (vec (repeat 9 nil))
+            :current-player "X"
+            :history        []}))
 
 (defn next-player [cp] (if (= cp "X") "O" "X"))
-
 (reg-event-db
  ::click-square
- (fn [db [_ num]]
-   (let [cp (:current-player db)]
+ (fn [db [_ sq]]
+   (let [{:keys [current-player squares history]} db]
      (-> db
-         (assoc-in [:squares num] cp)
-         (assoc :current-player (next-player cp))))))
+         (assoc-in [:squares sq] current-player)
+         (assoc :current-player (next-player current-player))
+         (assoc :history (conj history squares))))))
+
+(reg-event-db
+ ::return
+ (fn [db [_ squares move-num]]
+   (let [{:keys [history]} db]
+     (-> db
+         (assoc :squares squares)
+         (assoc :history (subvec history 0 move-num))))))
