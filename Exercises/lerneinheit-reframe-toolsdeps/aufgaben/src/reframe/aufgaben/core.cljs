@@ -1,13 +1,15 @@
 (ns reframe.aufgaben.core
   (:require
-   [reagent.core :as reagent :refer [atom]]
+   [re-frame.core :refer [dispatch dispatch-sync subscribe]]
    [reagent.dom :as rdom]
-   [re-frame.core :as rf]))
+   [reframe.aufgaben.events :as events]
+   [reframe.aufgaben.subs :as subs :refer [sub]]))
 
-(defn Square [value]
-  [:button {:className "square"}
-   ;; TODO Hier den Parameter anzeigen lassen!
-   ])
+(defn Square [num]
+  (let [value (sub [::subs/square num])]
+    [:button.square
+     (when (not value) {:on-click #(dispatch [::events/click-square num])})
+     value]))
 
 (defn Status []
   ;; TODO
@@ -17,18 +19,9 @@
 (defn Board []
   [:div
    [Status]
-   [:div {:className "board-row"}
-    [Square 0]
-    [Square 1]
-    [Square 2]]
-   [:div {:className "board-row"}
-    [Square 3]
-    [Square 4]
-    [Square 5]]
-   [:div {:className "board-row"}
-    [Square 6]
-    [Square 7]
-    [Square 8]]])
+   [:div.board-row [Square 0] [Square 1] [Square 2]]
+   [:div.board-row [Square 3] [Square 4] [Square 5]]
+   [:div.board-row [Square 6] [Square 7] [Square 8]]])
 
 (defn Game []
   [:div {:className "game"}
@@ -39,5 +32,6 @@
      [:ol ;; TODO Zeitreise
       ]]]])
 
+(dispatch-sync [::events/initialize-db])
 (rdom/render [Game]
              (. js/document (getElementById "app")))
