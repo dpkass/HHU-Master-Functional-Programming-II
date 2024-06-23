@@ -1,5 +1,6 @@
 (ns reframe.aufgaben.events
-  (:require [re-frame.core :refer [reg-event-db]]))
+  (:require [re-frame.core :refer [reg-event-db]]
+            [reframe.aufgaben.core :refer [next-player]]))
 
 (reg-event-db
  ::initialize-db
@@ -7,7 +8,6 @@
             :current-player "X"
             :history        []}))
 
-(defn next-player [cp] (if (= cp "X") "O" "X"))
 (reg-event-db
  ::click-square
  (fn [db [_ sq]]
