@@ -7,10 +7,9 @@
 
 
 (defn Square [sq]
-  (let [value (sub [::subs/square sq])
-        game-over? (sub [::subs/winner])]
+  (let [value (sub [::subs/square sq])]
     [:button.square
-     (when (not (or game-over? value)) {:on-click #(dispatch [::events/click-square sq])})
+     {:on-click #(dispatch [::events/click-square sq])}
      value]))
 
 (defn Status []

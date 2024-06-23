@@ -10,8 +10,9 @@
 (defn select-indexes [v idxs]
   (map #(v %) idxs))
 
-(defn win? [squares]
+(defn get-winner [squares]
   (some
-   (fn [line] (let [line-vals (select-indexes squares line)]
-                (and (first line-vals) (apply = line-vals))))
+   (fn [line]
+     (let [line-vals (select-indexes squares line)]
+       (and (apply = line-vals) (first line-vals))))
    lines))

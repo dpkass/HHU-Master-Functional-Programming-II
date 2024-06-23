@@ -1,6 +1,6 @@
 (ns reframe.aufgaben.events
   (:require [re-frame.core :refer [reg-event-db]]
-            [reframe.aufgaben.core :refer [next-player win?]]))
+            [reframe.aufgaben.core :refer [get-winner next-player]]))
 
 (reg-event-db
  ::initialize-db
@@ -11,13 +11,15 @@
 
 (reg-event-db
  ::click-square
- (fn [db [_ sq]]
-   (let [{:keys [current-player squares history]} db
-         new-db (-> db
-                    (assoc-in [:squares sq] current-player)
-                    (update :current-player next-player)
-                    (assoc :history (conj history squares)))]
-     (assoc new-db :winner (when (win? (:squares new-db)) current-player)))))
+ (fn [{:keys [current-player squares winner] :as db} [_ sq]]
+   (if (or winner (squares sq))
+     db                                                     ; do nothing
+     (let [updated-squares (assoc squares sq current-player)]
+       (-> db
+           (assoc :squares updated-squares)
+           (update :current-player next-player)
+           (update :history conj squares)
+           (assoc :winner (get-winner updated-squares)))))))
 
 (reg-event-db
  ::return
