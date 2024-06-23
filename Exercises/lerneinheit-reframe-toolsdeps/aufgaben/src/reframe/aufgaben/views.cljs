@@ -7,13 +7,18 @@
 
 
 (defn Square [sq]
-  (let [value (sub [::subs/square sq])]
+  (let [value (sub [::subs/square sq])
+        game-over? (sub [::subs/winner])]
     [:button.square
-     (when (not value) {:on-click #(dispatch [::events/click-square sq])})
+     (when (not (or game-over? value)) {:on-click #(dispatch [::events/click-square sq])})
      value]))
 
 (defn Status []
-  (str "Next player: " (sub [::subs/current-player])))
+  (let [winner (sub [::subs/winner])
+        player (sub [::subs/current-player])]
+    (if winner
+      (str "Winner: " winner)
+      (str "Next player: " player))))
 
 ;; Diese Komponente kann (muss nicht) so bleiben.
 (defn Board []

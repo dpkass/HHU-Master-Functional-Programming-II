@@ -3,9 +3,8 @@
 
 (def sub (comp deref subscribe))
 
-(reg-sub
- ::square
- (fn [db [_ sq]] (get-in db [:squares sq])))
-
-(reg-sub ::current-player #(:current-player %))
+(reg-sub ::winner #(:winner %))
 (reg-sub ::history #(:history %))
+(reg-sub ::current-player #(:current-player %))
+
+(reg-sub ::square (fn [db [_ sq]] (get-in db [:squares sq])))
