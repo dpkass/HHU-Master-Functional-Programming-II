@@ -12,8 +12,7 @@
      value]))
 
 (defn Status []
-  ;; TODO
-  "Next player: X")
+  (str "Next player: " (sub [::subs/current-player])))
 
 ;; Diese Komponente kann (muss nicht) so bleiben.
 (defn Board []
