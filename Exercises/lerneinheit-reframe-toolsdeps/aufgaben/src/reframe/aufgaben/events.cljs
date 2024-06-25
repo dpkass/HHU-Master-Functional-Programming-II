@@ -27,4 +27,5 @@
    (let [{:keys [history]} db]
      (-> db
          (assoc :squares squares)
-         (assoc :history (subvec history 0 move-num))))))
+         (assoc :history (subvec history 0 move-num))
+         (dissoc :winner)))))
