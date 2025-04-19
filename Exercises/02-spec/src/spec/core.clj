@@ -138,7 +138,7 @@ Some invalid values are:
 
 (s/def ::user
   (s/with-gen
-   (s/keys :req [::first-name ::last-name ::id])
+   (s/keys :req-un [::first-name ::last-name ::id])
    user-generator))
 
 (s/exercise ::user)

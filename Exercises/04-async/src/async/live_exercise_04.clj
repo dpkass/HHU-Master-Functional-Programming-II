@@ -1,5 +1,5 @@
 (ns async.live-exercise-04
-  (:use [clojure.core.async]))
+  (:require [clojure.core.async :refer [<!! <! >!! >! go chan thread timeout]]))
 
 
 
@@ -80,7 +80,8 @@
   (let [outs (atom [])]
     (go (while :true
           (let [in (<! c)]
-            (doseq [out outs] (>! out in)))))))
+            (doseq [out @outs] (>! out in)))))
+    outs))
 
 (defn tap [a c]
   (swap! a conj c))
